@@ -1,24 +1,20 @@
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 /**
- * A simple To-Do List application that allows users to:
- * 1. Add tasks
- * 2. View tasks
+ * A To-Do List application with Task Prioritization.
+ * Users can:
+ * 1. Add tasks with priority (High, Medium, Low)
+ * 2. View tasks sorted by priority
  * 3. Remove tasks
  * 4. Exit the program
- *
- * Uses an ArrayList to store tasks and Scanner for user input.
  */
 public class ToDoListApp {
-    // Stores the list of tasks
-    private static ArrayList<String> tasks = new ArrayList<>();
+    private static List<Task> tasks = new ArrayList<>(); // Stores tasks as Task objects
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in); // Scanner for user input
-        int choice; // Stores user menu choice
+        Scanner scanner = new Scanner(System.in);
+        int choice;
 
-        // Loop to continuously show menu until user exits
         do {
             // Display menu options
             System.out.println("\n--- To-Do List ---");
@@ -28,66 +24,119 @@ public class ToDoListApp {
             System.out.println("4. Exit");
             System.out.print("Enter choice: ");
 
-            // Read user input (menu choice)
             choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline character left after nextInt()
+            scanner.nextLine();
 
-            // Handle user choice using a switch statement
+            // Handle user input choices
             switch (choice) {
-                case 1 -> addTask(scanner); // Call method to add a task
-                case 2 -> viewTasks(); // Call method to display tasks
-                case 3 -> removeTask(scanner); // Call method to remove a task
-                case 4 -> System.out.println("Exiting..."); // Exit message
-                default -> System.out.println("Invalid choice. Try again."); // Handle invalid input
+                case 1 -> addTask(scanner);
+                case 2 -> viewTasks();
+                case 3 -> removeTask(scanner);
+                case 4 -> System.out.println("Exiting...");
+                default -> System.out.println("Invalid choice. Try again.");
             }
-        } while (choice != 4); // Loop until user selects option 4 (Exit)
+        } while (choice != 4);
 
-        scanner.close(); // Close scanner to prevent memory leaks
+        scanner.close(); // Close scanner to avoid resource leak
     }
 
     /**
-     * Method to add a new task to the list.
+     * Adds a new task with a priority level.
      * @param scanner Scanner object for user input.
      */
     private static void addTask(Scanner scanner) {
         System.out.print("Enter task: ");
-        String task = scanner.nextLine(); // Read task from user
-        tasks.add(task); // Add task to the list
-        System.out.println("Task added!"); // Confirmation message
+        String description = scanner.nextLine();
+        
+        System.out.print("Enter priority (H for High, M for Medium, L for Low): ");
+        char priorityInput = scanner.nextLine().toUpperCase().charAt(0);
+        
+        TaskPriority priority;
+        switch (priorityInput) {
+            case 'H' -> priority = TaskPriority.HIGH;
+            case 'M' -> priority = TaskPriority.MEDIUM;
+            case 'L' -> priority = TaskPriority.LOW;
+            default -> {
+                System.out.println("Invalid priority! Defaulting to Low.");
+                priority = TaskPriority.LOW;
+            }
+        }
+        
+        tasks.add(new Task(description, priority));
+        System.out.println("Task added!");
     }
 
     /**
-     * Method to display all tasks in the list.
+     * Displays all tasks sorted by priority.
      */
     private static void viewTasks() {
-        if (tasks.isEmpty()) { // Check if the list is empty
+        if (tasks.isEmpty()) {
             System.out.println("No tasks available.");
-        } else {
-            System.out.println("\nYour Tasks:");
-            // Loop through the list and display each task with a number
-            for (int i = 0; i < tasks.size(); i++) {
-                System.out.println((i + 1) + ". " + tasks.get(i));
-            }
+            return;
+        }
+        
+        // Sort tasks based on priority level
+        tasks.sort(Comparator.comparing(Task::getPriority));
+        System.out.println("\nYour Tasks:");
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println((i + 1) + ". " + tasks.get(i));
         }
     }
 
     /**
-     * Method to remove a task from the list.
+     * Removes a task by its index number.
      * @param scanner Scanner object for user input.
      */
     private static void removeTask(Scanner scanner) {
-        viewTasks(); // Show current tasks before asking for input
-        if (tasks.isEmpty()) return; // If no tasks, exit method
+        viewTasks();
+        if (tasks.isEmpty()) return;
 
         System.out.print("Enter task number to remove: ");
-        int index = scanner.nextInt(); // Get task number from user
+        int index = scanner.nextInt();
 
-        // Validate the task number before removing
         if (index > 0 && index <= tasks.size()) {
-            tasks.remove(index - 1); // Remove task (index is 1-based, ArrayList is 0-based)
-            System.out.println("Task removed."); // Confirmation message
+            tasks.remove(index - 1);
+            System.out.println("Task removed.");
         } else {
-            System.out.println("Invalid task number."); // Handle invalid input
+            System.out.println("Invalid task number.");
         }
     }
+}
+
+/**
+ * Represents a Task with a description and priority level.
+ */
+class Task {
+    private final String description;
+    private final TaskPriority priority;
+
+    /**
+     * Constructor to initialize a task.
+     * @param description Task description.
+     * @param priority Priority level of the task.
+     */
+    public Task(String description, TaskPriority priority) {
+        this.description = description;
+        this.priority = priority;
+    }
+
+    /**
+     * Returns the priority of the task.
+     * @return TaskPriority enum value.
+     */
+    public TaskPriority getPriority() {
+        return priority;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + priority + "] " + description;
+    }
+}
+
+/**
+ * Enum representing task priority levels.
+ */
+enum TaskPriority {
+    HIGH, MEDIUM, LOW
 }
