@@ -3,9 +3,9 @@
 # **Java To-Do List Application**
 
 ## **Overview**
-This is a simple **To-Do List application** built in **Java**. It allows users to:
-✅ **Add tasks**  
-✅ **View tasks**  
+This is a simple **To-Do List application** built-in **Java**. It allows users to:
+✅ **Add tasks with priority level (High, Medium, Low)**  
+✅ **View tasks sorted by priority**  
 ✅ **Remove tasks**  
 ✅ **Exit the application**  
 
@@ -19,7 +19,9 @@ This project demonstrates **basic Java programming concepts**, including:
 ---
 
 ## **Features**
+- **Task Prioritization:** (High, Medium, Low).
 - **Add Task:** Users can enter a new task to be added to the list.
+- **Sort Tasks:** Sorts tasks automatically based on priority.
 - **View Tasks:** Displays all current tasks in the list.
 - **Remove Task:** Users can delete a task by specifying its number.
 - **Exit Program:** Safely exits the application.
